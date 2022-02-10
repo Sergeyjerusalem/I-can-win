@@ -1,8 +1,8 @@
 const DriverHolder = require('../../src/app/driverHolder/driverholder');
-const CloudGoogle = require('../../src/app/pages/workingPages/cloudGoogle');
-const GoogleCalc = require('../../src/app/pages/workingPages/googleCalc');
-const YopMail = require('../../src/app/pages/workingPages/yopMail');
+const PasteBin = require('../../src/app/pages/workingPages/pasteBin');
+const ResultPage = require('../../src/app/pages/workingPages/resultPage');
 const dh = new DriverHolder;
+
 
 
 describe("A suite is just a function", function () {
@@ -15,7 +15,9 @@ describe("A suite is just a function", function () {
     })
 
     beforeEach(async function () {
+
         await driver.manage().window().maximize();
+
     });
 
     afterEach(async function () {
@@ -27,52 +29,24 @@ describe("A suite is just a function", function () {
     });
 
     it("1st test suite", async function () {
-        let cloudGoogle = new CloudGoogle(driver);
-        let googleCalc = new GoogleCalc(driver);
-        let yopMail = new YopMail(driver);
-        await cloudGoogle.getPage('');
-        await cloudGoogle.waitLabel('');
-        await cloudGoogle.click('searchLabel');
-        await cloudGoogle.waitSearchInput();
-        await cloudGoogle.sendKeys('searchInput', 'Google Cloud Platform Pricing Calculator');
-        await cloudGoogle.click('searchLabel');
-        await cloudGoogle.waitSearchTitle();
-        await cloudGoogle.selectSearchTitle(0);
-        await googleCalc.SwitchtoFrame();
-        await googleCalc.waitNumberOfInstance();
-        await googleCalc.calcSendKeys('numberOfInstance', '4');
-        await googleCalc.changeOperatingSys();
-        await googleCalc.changeClass();
-        await googleCalc.changeSeries();
-        await googleCalc.changeType();
-        await googleCalc.space();
-        await googleCalc.addGPU();
-        await googleCalc.addSSD();
-        await googleCalc.addDatacenter();
-        await googleCalc.addCommUsage();
-        await googleCalc.clickAddtoEstimate(0);
-        let text1 = await googleCalc.getText('totalCostggl')
-        await googleCalc.waitEmailEstimateButton();
-        await googleCalc.click('emailEstimateButton')
-        await googleCalc.windowOri();
-        await googleCalc.openNewPage();
-        await googleCalc.switchtoPage();
-        await yopMail.waitMailTitle();
-        await yopMail.sendKeys('mailInput', 'lolyopa@mail.ru');
-        await yopMail.waitAlias();
-        await yopMail.getText('alias');
-        await googleCalc.returnToPage();
-        await googleCalc.SwitchtoFrame();
-        await yopMail.sendMail('emailInput');
-        await googleCalc.waitEmailButtonActive();
-        await googleCalc.click('emailSendButton');
-        await googleCalc.switchtoPage();
-        await yopMail.waitRefresh();
-        await yopMail.click('refreshButton');
-        await yopMail.waitTotalCost();
-        let text2 = await yopMail.getText('totalCostym');
-        await yopMail.deleteMail();
-        expect(text1).toContain(text2);
+        let pasteBin = new PasteBin(driver);
+        let resultPage = new ResultPage(driver);
+        await pasteBin.getPage('');
+        await pasteBin.waitTextArea();
+        await pasteBin.sendPaste();
+        await pasteBin.pasteHiglightOption();
+        await pasteBin.pasteExpirationOption();
+        await pasteBin.waitPastName();
+        await pasteBin.sendKeys('pastName', 'how to gain dominance among developers');
+        await pasteBin.click('submitButton');
+        await resultPage.waitPage();
+        let code = await resultPage.getText('code')
+        expect(pasteBin.message).toContain(code);
+        let title = await resultPage.getText('title');
+        expect(title).toContain('how to gain dominance among developers');
+        let type = await resultPage.getText('bashIndicator');
+        expect(type).toContain('Bash');
+
     });
 
 });
